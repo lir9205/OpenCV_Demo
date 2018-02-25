@@ -51,7 +51,27 @@
     //1、膨胀：求局部最大值操作
     //self.imageView.image = [ImageUtils opencvImageDilate:srcImage];
     //2、腐蚀：求局部最小值操作
-    self.imageView.image = [ImageUtils opencvImageErode:srcImage];
+    //self.imageView.image = [ImageUtils opencvImageErode:srcImage];
+    //3、 核心API 函数：morphologyEx()
+    //self.imageView.image = [ImageUtils opencvImageMorphologyEx:srcImage];
+    
+
+    // 第十点：漫水填充 -> floodFill()
+    //self.imageView.image = [ImageUtils opencvImageFloodFill:srcImage];
+    
+    // 第十一点：图片高质量压缩
+    //self.imageView.image = [ImageUtils opencvImageCVSaveImage:srcImage];
+
+    // 第十二点：图像金字塔和图片尺寸缩放
+    //2、图片尺寸缩放->resize()函数
+    //self.imageView.image = [ImageUtils opencvImageResize:srcImage];
+
+    //图像变换
+    //1、基于OpenCV边缘检测
+    //self.imageView.image = [ImageUtils opencvImageCanny:srcImage];
+
+    //2、霍夫变换
+    self.imageView.image = [ImageUtils opencvImageHoughLinesP:srcImage];
 }
 
 

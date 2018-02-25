@@ -216,4 +216,206 @@
     return MatToUIImage(mat_image_filter);
 }
 
+//3、 核心API 函数：morphologyEx()
++ (UIImage *)opencvImageMorphologyEx:(UIImage *)srcImage {
+    // 加载图片
+    Mat mat_image_src;
+    UIImageToMat(srcImage, mat_image_src);
+    
+    // 在 iOS 平台，OpenCV支持单通道和3通道
+    // 将4个通道转成三个通道
+    cvtColor(mat_image_src, mat_image_src, CV_RGBA2RGB, 3);
+    
+    
+    //调用 API
+    //    MORPH_ERODE 腐蚀
+    //    MORPH_DILATE 膨胀
+    //    MORPH_OPEN 开运算
+    //    MORPH_CLOSE 闭运算
+    //    MORPH_GRADIENT 形态学梯度
+    //    MORPH_TOPHAT 顶帽
+    //    MORPH_BLACKHAT 黑帽
+    
+    //    Mat mat_element = getStructuringElement(MORPH_RECT, Size2i(10, 10));
+    //    Mat mat_image_dst;
+    //    morphologyEx(mat_image_src, mat_image_dst, MORPH_TOPHAT, mat_element);
+    
+    // 自己实现
+    Mat mat_element = getStructuringElement(MORPH_RECT, Size2i(10, 10));
+    Mat mat_image_dst;
+    
+    //    // 开运算  -> 先腐蚀后膨胀
+    //    erode(mat_image_src, mat_image_dst, mat_element);
+    //    dilate(mat_image_dst, mat_image_dst, mat_element);
+    
+    //    // 闭运算  -> 先膨胀后腐蚀
+    //    dilate(mat_image_src, mat_image_dst, mat_element);
+    //    erode(mat_image_dst, mat_image_dst, mat_element);
+    
+    //    // 形态学梯度运算  -> 先得到膨胀图 -> 在得到腐蚀图 -> 最后进行差值
+    //    Mat mat_image_dilate;
+    //    dilate(mat_image_src, mat_image_dilate, mat_element);
+    //    Mat mat_image_erode;
+    //    erode(mat_image_src, mat_image_erode, mat_element);
+    //    mat_image_dst = mat_image_dilate - mat_image_erode;
+    
+    //    // 顶帽 -> 原图像与开运算结果之差
+    //    erode(mat_image_src, mat_image_dst, mat_element);
+    //    dilate(mat_image_dst, mat_image_dst, mat_element);
+    //    mat_image_dst = mat_image_src - mat_image_dst;
+    
+    // 黑帽 -> 闭运算与原图像结果之差
+    dilate(mat_image_src, mat_image_dst, mat_element);
+    erode(mat_image_dst, mat_image_dst, mat_element);
+    mat_image_dst = mat_image_dst - mat_image_src;
+
+    // 将 Mat 图片转为 iOS 图片
+    return MatToUIImage(mat_image_dst);
+}
+
+// 第十点：漫水填充 -> floodFill()
++ (UIImage *)opencvImageFloodFill:(UIImage *)srcImage {
+    // 加载图片
+    Mat mat_image_src;
+    UIImageToMat(srcImage, mat_image_src);
+    
+    // 在 iOS 平台，OpenCV支持单通道和3通道
+    // 将4个通道转成三个通道
+    cvtColor(mat_image_src, mat_image_src, CV_RGBA2RGB, 3);
+    
+    Rect2i rect;
+    floodFill(mat_image_src,
+              Point2i(50, 50),
+              Scalar(155, 100, 255),
+              &rect,
+              Scalar(30, 30, 30),
+              Scalar(30, 30, 30));
+
+    
+    // 将 Mat 图片转为 iOS 图片
+    return MatToUIImage(mat_image_src);
+}
+
+
+//// 第十一点：图片高质量压缩
++ (UIImage *)opencvImageCVSaveImage:(UIImage *)srcImage {
+    // 加载图片
+    Mat mat_image_src;
+    UIImageToMat(srcImage, mat_image_src);
+    
+    // 在 iOS 平台，OpenCV支持单通道和3通道
+    // 将4个通道转成三个通道
+    cvtColor(mat_image_src, mat_image_src, CV_RGBA2RGB, 3);
+    
+    //p 图片参数
+    int p[3];
+    //图片类型
+    p[0] = CV_IMWRITE_JPEG_QUALITY;
+    //压缩比例
+    p[1] = 50;
+    p[2] = 0;
+    
+    IplImage *image = cvLoadImage("/Users/admin/Desktop/img.png");
+    cvSaveImage("/Users/admin/Desktop/image_new.jpg", image, p);
+
+    
+    // 将 Mat 图片转为 iOS 图片
+    return MatToUIImage(mat_image_src);
+}
+
+
+// 第十二点：图像金字塔和图片尺寸缩放
+//1、图像金字塔
+//
+//层级越高，则图像越小，分辨率越低
+//对图像向上进行采样 -> pyrUp 函数
+//对图像向下采样 -> pyrDown 函数
+//
+//2、图片尺寸缩放->resize()函数
++ (UIImage *)opencvImageResize:(UIImage *)srcImage {
+    // 加载图片
+    Mat mat_image_src;
+    UIImageToMat(srcImage, mat_image_src);
+    
+    // 在 iOS 平台，OpenCV支持单通道和3通道
+    // 将4个通道转成三个通道
+    cvtColor(mat_image_src, mat_image_src, CV_RGBA2RGB, 3);
+    
+    Mat mat_iamge_dst;
+    resize(mat_image_src, mat_iamge_dst, Size2i(50, 50));
+    
+    // 将 Mat 图片转为 iOS 图片
+    return MatToUIImage(mat_iamge_dst);
+}
+
+
+#pragma mark - 图像变换
+
+//第一点：基于OpenCV边缘检测
++ (UIImage *)opencvImageCanny:(UIImage *)srcImage {
+    // 加载图片
+    Mat mat_image_src;
+    UIImageToMat(srcImage, mat_image_src);
+    
+    // 在 iOS 平台，OpenCV支持单通道和3通道
+    // 将4个通道转成三个通道
+    cvtColor(mat_image_src, mat_image_src, CV_RGBA2RGB, 3);
+    
+    // 第二步： 创建和mat_image_src同样大小的图片(Mat)
+    Mat mat_image_dst;
+    mat_image_dst.create(mat_image_src.size(), mat_image_src.type());
+    
+    // 第三步：将图片进行灰度处理
+    Mat mat_image_gray;
+    cvtColor(mat_image_src, mat_image_gray, COLOR_BGR2GRAY);
+    
+    // 第四步： 使用3*3内核来降噪处理
+    Mat mat_image_edge;
+    blur(mat_image_gray, mat_image_edge, Size2i(3,3));
+    
+    // 第五步：进行算子处理
+    Canny(mat_image_edge, mat_image_edge, 3, 9, 3);
+
+    
+    // 将 Mat 图片转为 iOS 图片
+    return MatToUIImage(mat_image_edge);
+}
+
+//第二点：霍夫变换
++ (UIImage *)opencvImageHoughLinesP:(UIImage *)srcImage {
+    // 加载图片
+    Mat mat_image_src;
+    UIImageToMat(srcImage, mat_image_src);
+    
+    // 在 iOS 平台，OpenCV支持单通道和3通道
+    // 将4个通道转成三个通道
+    cvtColor(mat_image_src, mat_image_src, CV_RGBA2RGB, 3);
+    
+    // 进行边缘检测和转化为灰度图片
+    Mat mat_image_edges;
+    Canny(mat_image_src, mat_image_edges, 50, 200, 3);
+    Mat mat_image_dst;
+    cvtColor(mat_image_edges, mat_image_dst, CV_GRAY2BGR);
+    
+    
+    // 进行霍夫线变换
+    vector<Vec4i> lines;
+    HoughLinesP(mat_image_edges, lines, 1, CV_PI/180, 80, 50, 10);
+    
+    for (size_t i = 0; i < lines.size(); i++) {
+        Vec4i l = lines[i];
+        line(mat_image_dst, Point2i(l[0], l[1]), Point2i(l[2], l[3]), Scalar(186, 88, 255), 1, LINE_AA);
+    }
+    
+    // 将 Mat 图片转为 iOS 图片
+    return MatToUIImage(mat_image_dst);
+}
+
+//跨平台处理
+//
+//一个方面：环境配置（每一个平台不一样）
+//另一个方面：存在兼容性问题，那么一般情况下都是图片通道的类型问题->原来4个通道->单通道或者3通道
+
+    
+
 @end

@@ -96,24 +96,24 @@ using namespace std;
 //}
 
 
-//第八点：非线性滤波->核心函数->案例
-//1、中值滤波 -> medianBlur() 函数
-int main(int argc, const char * argv[]) {
-    //第一步：加载一张图片
-    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
-
-    //参数一：原始图片
-    //参数二：目标图片
-    Mat mat_image_dst;
-    //参数三：孔径的线性尺寸（注意：参数必须是大于等于1，并且是奇数，例如：3、5、7、9、11...）
-    medianBlur(mat_image_src, mat_image_dst, 5);
-
-    namedWindow("图片显示");
-    imshow("图片显示", mat_image_dst);
-    waitKey();
-
-    return 0;
-}
+////第八点：非线性滤波->核心函数->案例
+////1、中值滤波 -> medianBlur() 函数
+//int main(int argc, const char * argv[]) {
+//    //第一步：加载一张图片
+//    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
+//
+//    //参数一：原始图片
+//    //参数二：目标图片
+//    Mat mat_image_dst;
+//    //参数三：孔径的线性尺寸（注意：参数必须是大于等于1，并且是奇数，例如：3、5、7、9、11...）
+//    medianBlur(mat_image_src, mat_image_dst, 5);
+//
+//    namedWindow("图片显示");
+//    imshow("图片显示", mat_image_dst);
+//    waitKey();
+//
+//    return 0;
+//}
 
 
 //2、双边滤波 -> bilateralFilter()函数 -> 美颜处理
@@ -206,10 +206,192 @@ int main(int argc, const char * argv[]) {
 //}
 
 
+//3、 核心API 函数：morphologyEx()
+//int main(int argc, const char * argv[]) {
+//
+//    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
+//
+//    //调用 API
+//    //    MORPH_ERODE 腐蚀
+//    //    MORPH_DILATE 膨胀
+//    //    MORPH_OPEN 开运算
+//    //    MORPH_CLOSE 闭运算
+//    //    MORPH_GRADIENT 形态学梯度
+//    //    MORPH_TOPHAT 顶帽
+//    //    MORPH_BLACKHAT 黑帽
+//
+//    //    Mat mat_element = getStructuringElement(MORPH_RECT, Size2i(10, 10));
+//    //    Mat mat_image_dst;
+//    //    morphologyEx(mat_image_src, mat_image_dst, MORPH_TOPHAT, mat_element);
+//
+//    // 自己实现
+//    Mat mat_element = getStructuringElement(MORPH_RECT, Size2i(10, 10));
+//    Mat mat_image_dst;
+//
+//    //    // 开运算  -> 先腐蚀后膨胀
+//    //    erode(mat_image_src, mat_image_dst, mat_element);
+//    //    dilate(mat_image_dst, mat_image_dst, mat_element);
+//
+//    //    // 闭运算  -> 先膨胀后腐蚀
+//    //    dilate(mat_image_src, mat_image_dst, mat_element);
+//    //    erode(mat_image_dst, mat_image_dst, mat_element);
+//
+//    //    // 形态学梯度运算  -> 先得到膨胀图 -> 在得到腐蚀图 -> 最后进行差值
+//    //    Mat mat_image_dilate;
+//    //    dilate(mat_image_src, mat_image_dilate, mat_element);
+//    //    Mat mat_image_erode;
+//    //    erode(mat_image_src, mat_image_erode, mat_element);
+//    //    mat_image_dst = mat_image_dilate - mat_image_erode;
+//
+//    //    // 顶帽 -> 原图像与开运算结果之差
+//    //    erode(mat_image_src, mat_image_dst, mat_element);
+//    //    dilate(mat_image_dst, mat_image_dst, mat_element);
+//    //    mat_image_dst = mat_image_src - mat_image_dst;
+//
+//    // 黑帽 -> 闭运算与原图像结果之差
+//    dilate(mat_image_src, mat_image_dst, mat_element);
+//    erode(mat_image_dst, mat_image_dst, mat_element);
+//    mat_image_dst = mat_image_dst - mat_image_src;
+//
+//
+//    namedWindow("形态学滤波图片");
+//    imshow("形态学滤波图片", mat_image_dst);
+//    waitKey();
+//
+//    return 0;
+//}
 
 
+//// 第十点：漫水填充 -> floodFill()
+//int main(int argc, const char * argv[]) {
+//
+//    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
+//
+//    Rect rect;
+//    floodFill(mat_image_src,
+//              Point2i(50, 50),
+//              Scalar(155, 100, 255),
+//              &rect,
+//              Scalar(30, 30, 30),
+//              Scalar(30, 30, 30));
+//
+//    namedWindow("形态学滤波图片");
+//    imshow("形态学滤波图片", mat_image_src);
+//    waitKey();
+//
+//    return 0;
+//}
+
+//// 第十一点：图片高质量压缩
+//int main(int argc, const char * argv[]) {
+//    //p 图片参数
+//    int p[3];
+//    //图片类型
+//    p[0] = CV_IMWRITE_JPEG_QUALITY;
+//    //压缩比例
+//    p[1] = 50;
+//    p[2] = 0;
+//
+//    IplImage *image = cvLoadImage("/Users/admin/Desktop/img.png");
+//    cvSaveImage("/Users/admin/Desktop/image_new.jpg", image, p);
+//
+//    return 0;
+//}
 
 
+//// 第十二点：图像金字塔和图片尺寸缩放
+////1、图像金字塔
+////
+////层级越高，则图像越小，分辨率越低
+////对图像向上进行采样 -> pyrUp 函数
+////对图像向下采样 -> pyrDown 函数
+////
+////2、图片尺寸缩放->resize()函数
+//int main(int argc, const char * argv[]) {
+//
+//    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
+//
+//
+//    Mat mat_iamge_dst;
+//    resize(mat_image_src, mat_iamge_dst, Size2i(50, 50));
+//
+//
+//    namedWindow("图片");
+//    imshow("图片", mat_iamge_dst);
+//    imwrite("/Users/admin/Desktop/image_new.jpg", mat_iamge_dst);
+//    waitKey();
+//
+//    return 0;
+//
+//}
+
+
+#pragma mark - 图像变换
+
+//第一点：基于OpenCV边缘检测
+//int main(int argc, const char * argv[]) {
+//
+//    // 第一步：加载图片
+//    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
+//
+//    // 第二步： 创建和mat_image_src同样大小的图片(Mat)
+//    Mat mat_image_dst;
+//    mat_image_dst.create(mat_image_src.size(), mat_image_src.type());
+//
+//    // 第三步：将图片进行灰度处理
+//    Mat mat_image_gray;
+//    cvtColor(mat_image_src, mat_image_gray, COLOR_BGR2GRAY);
+//
+//    // 第四步： 使用3*3内核来降噪处理
+//    Mat mat_image_edge;
+//    blur(mat_image_gray, mat_image_edge, Size(3,3));
+//
+//    // 第五步：进行算子处理
+//    Canny(mat_image_edge, mat_image_edge, 3, 9, 3);
+//
+//    // 第六步：显示图片
+//    imshow("边缘检测",  mat_image_edge);
+//    waitKey();
+//
+//    return 0;
+//}
+
+//第二点：霍夫变换
+int main(int argc, const char * argv[]) {
+    
+    // 第一步：加载图片
+    Mat mat_image_src = imread("/Users/admin/Desktop/image1.jpeg");
+    
+    // 进行边缘检测和转化为灰度图片
+    Mat mat_image_edges;
+    Canny(mat_image_src, mat_image_edges, 50, 200, 3);
+    Mat mat_image_dst;
+    cvtColor(mat_image_edges, mat_image_dst, CV_GRAY2BGR);
+    
+    
+    // 进行霍夫线变换
+    vector<Vec4i> lines;
+    HoughLinesP(mat_image_edges, lines, 1, CV_PI/180, 80, 50, 10);
+    
+    for (size_t i = 0; i < lines.size(); i++) {
+        Vec4i l = lines[i];
+        line(mat_image_dst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(186, 88, 255), 1, LINE_AA);
+    }
+    
+    
+    // 第六步：显示图片
+    //    imshow("原图",  mat_image_src);
+    //    imshow("边缘检测后的图",  mat_image_edges);
+    imshow("效果图",  mat_image_dst);
+    waitKey(0);
+    
+    return 0;
+}
+
+//跨平台处理
+//
+//一个方面：环境配置（每一个平台不一样）
+//另一个方面：存在兼容性问题，那么一般情况下都是图片通道的类型问题->原来4个通道->单通道或者3通道
 
 
 
